@@ -1,0 +1,9 @@
+# core ignores
+**/node_modules/
+**/.env*
+**/dist/
+**/build/
+**/.cache/
+
+# editor ignore
+.vscode/
