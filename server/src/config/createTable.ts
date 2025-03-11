@@ -1,5 +1,5 @@
 import { TableCreationParameters } from "@aws-sdk/client-dynamodb";
-import { createDynamoTable } from "./createDynamoTable";
+import { createDynamoTable } from "./createDynamoTable.js";
 
 // defines params to use as args for createDynamoTable
 const params: TableCreationParameters = {
@@ -10,7 +10,7 @@ const params: TableCreationParameters = {
             AttributeType: "S",
         },
         {
-            AttributeName: "createdAt",
+            AttributeName: "lastName",
             AttributeType: "S",
         },
     ],
@@ -20,7 +20,7 @@ const params: TableCreationParameters = {
             KeyType: "HASH",
         },
         {
-            AttributeName: "createdAt",
+            AttributeName: "lastName",
             KeyType: "RANGE",
         },
     ],
@@ -32,7 +32,6 @@ createDynamoTable(params)
     .catch((error) => {
         // aws sdk error for resource currently in use
         if (error.name === "ResourceInUseException") {
-            console.log("Table already exists - no action taken");
         } else {
             console.error("Creation failed:", error);
         }
