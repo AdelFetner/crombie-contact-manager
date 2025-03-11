@@ -6,7 +6,9 @@
     "main": "app.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "nodemon app.js"
+        "start": "tsx app.ts",
+        "build": "tsx",
+        "dev": "npx tsx app.ts"
     },
     "keywords": [],
     "author": "",
