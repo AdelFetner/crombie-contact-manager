@@ -4,6 +4,7 @@ import { createDynamoTable } from "./createDynamoTable.js";
 // defines params to use as args for createDynamoTable
 const params: TableCreationParameters = {
     TableName: "Contacts",
+    // defines the attributes and their types
     AttributeDefinitions: [
         {
             AttributeName: "id",
@@ -14,6 +15,7 @@ const params: TableCreationParameters = {
             AttributeType: "S",
         },
     ],
+    // defines the key schema for the table
     KeySchema: [
         {
             AttributeName: "id",
