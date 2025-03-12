@@ -1,4 +1,9 @@
-import { GetCommand, PutCommand, ScanCommand } from "@aws-sdk/lib-dynamodb";
+import {
+    DeleteCommand,
+    GetCommand,
+    PutCommand,
+    ScanCommand,
+} from "@aws-sdk/lib-dynamodb";
 import { docClient } from "../config/dynamoConnection.js";
 import { v4 as uuidv4 } from "uuid";
 import { QueryCommand } from "@aws-sdk/client-dynamodb";
@@ -14,7 +19,7 @@ interface Contact {
     createdAt: string;
     company?: string;
     role?: string;
-    notes?: string[];
+    notes?: string;
 }
 
 // create contact
@@ -90,5 +95,40 @@ export const getContacts = async () => {
         return response.Items;
     } catch (error) {
         throw new Error("Failed to get contacts");
+    }
+};
+
+// delete contact
+export const deleteContact = async (contactId: string) => {
+    // checks if the contactId is valid
+    if (!contactId) {
+        throw new Error("Contact ID is required");
+    }
+    // checks if the contactId is a valid uuid, uuids are 36 characters long
+    if (contactId.length !== 36) {
+        throw new Error("Invalid contact ID");
+    }
+
+    // delete only knows the id given through the params, and it can't delete without the full key, which is a composite of id + lastName, so we need to get the lastName first
+    const getLastname = await getContact(contactId);
+
+    const request = new DeleteCommand({
+        TableName: "Contacts",
+        Key: {
+            id: contactId,
+            lastName: getLastname?.[0]?.lastName,
+        },
+    });
+
+    try {
+        // deletes the contact data from the table
+        const response = await docClient.send(request);
+        // returns the response and the data for the controller to show
+        return {
+            response,
+            data: { id: contactId, createdAt: getLastname?.[0]?.createdAt },
+        };
+    } catch (error) {
+        throw new Error("Failed to delete contact");
     }
 };
