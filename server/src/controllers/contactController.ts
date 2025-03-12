@@ -1,5 +1,9 @@
 import { Request, Response } from "express";
-import { createContact, getContact } from "../services/contactService.js";
+import {
+    createContact,
+    getContact,
+    getContacts,
+} from "../services/contactService.js";
 
 // create contact
 export const createContactController = async (req: Request, res: Response) => {
@@ -7,10 +11,12 @@ export const createContactController = async (req: Request, res: Response) => {
         // calls createContact func with the request body as the param
         const result = await createContact(req.body);
 
-        // returns a 201 and the result
+        // returns a 201 and the result, with the entity data and the aws response
+        const { data, response } = result;
         res.status(201).json({
             message: "Contact created successfully",
-            data: result,
+            data: data,
+            awsResponse: response,
         });
     } catch (error: unknown) {
         if (error instanceof Error) {
@@ -42,6 +48,31 @@ export const getContactController = async (req: Request, res: Response) => {
         if (error instanceof Error) {
             res.status(500).json({
                 error: `Failed to get contact: ${error.message}`,
+            });
+        }
+    }
+};
+
+// get all contacts
+export const getContactsController = async (req: Request, res: Response) => {
+    try {
+        // calls getContacts func
+        const contacts = await getContacts();
+
+        // checks for falsy array
+        if (!contacts) {
+            res.status(404).json({ error: "Contacts not found" });
+            return;
+        }
+
+        res.status(200).json({
+            message: "Contacts retrieved successfully",
+            data: contacts,
+        });
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            res.status(500).json({
+                error: `Failed to get contacts: ${error.message}`,
             });
         }
     }

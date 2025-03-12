@@ -1,4 +1,3 @@
-// components/ContactDetails.tsx
 import { useParams } from "react-router";
 import axios from "axios";
 import { useEffect, useState } from "react";

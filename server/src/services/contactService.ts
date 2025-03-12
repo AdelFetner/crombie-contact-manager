@@ -37,7 +37,11 @@ export const createContact = async (
     // sends request to dynamodb
     try {
         const response = await docClient.send(request);
-        return response;
+        // returns the response and the data for the controller to show
+        return {
+            response,
+            data: newContact,
+        };
     } catch (error) {
         throw new Error("Failed to create contact");
     }
@@ -69,5 +73,22 @@ export const getContact = async (contactId: string) => {
         return response.Items?.map((item) => unmarshall(item));
     } catch (error) {
         throw new Error("Failed to get contact");
+    }
+};
+
+// query all contacts
+export const getContacts = async () => {
+    const request = new ScanCommand({
+        TableName: "Contacts",
+    });
+
+    try {
+        // scans the table for all the contacts
+        const response = await docClient.send(request);
+
+        // returns the contacts array
+        return response.Items;
+    } catch (error) {
+        throw new Error("Failed to get contacts");
     }
 };

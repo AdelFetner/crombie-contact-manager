@@ -17,7 +17,23 @@ export const formSchema = z.object({
         .max(16, { message: "Phone number is too long" }),
     company: z.string().optional(),
     role: z.string().optional(),
-    notes: z.string().optional(),
+    notes: z.preprocess((val) => {
+        if (typeof val === "string") {
+            const trimmed = val.trim();
+            return trimmed === ""
+                ? undefined
+                : trimmed
+                      .split(",")
+                      .map((s) => s.trim())
+                      .filter((s) => s !== "");
+        }
+        return val;
+    }, z.array(z.string()).optional()),
 });
 
 export type TFormSchema = z.infer<typeof formSchema>;
+
+export interface Contact extends TFormSchema {
+    id: string;
+    createdAt: string;
+}

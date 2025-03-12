@@ -2,6 +2,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { formSchema, TFormSchema } from "../../lib/types";
 import { Loader2 } from "lucide-react"
+import { useNavigate } from "react-router";
+import axios from "axios";
 
 export default function ContactForm() {
     // setts up the useForm hook from react hook form, with a zod resolver that takes an schema
@@ -14,16 +16,16 @@ export default function ContactForm() {
         resolver: zodResolver(formSchema)
     });
 
+    const navigate = useNavigate();
+
     const onSubmit = async (data: TFormSchema) => {
         try {
-            // TODO: send data to server
-            // false api call after 2 seconds
-            await new Promise((resolve) => setTimeout(resolve, 2000));
-            console.log(data);
-            // reset the form
+            // sends a post request to the api to add a new contact and navigates to /contacts/:id
+            const response = await axios.post("http://localhost:3000/api/contacts", data);
+            navigate(`/contacts/${response.data.data.id}`)
             reset();
         } catch (error) {
-            console.error("submit failed,", error);
+            console.error("Failed to add contact", error);
         }
     }
 
