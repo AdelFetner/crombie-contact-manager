@@ -4,10 +4,10 @@ export default function App() {
     return (
         <div className="mx-auto p-6 place-items-center w-screen h-screen">
             <nav className="mb-8 absolute top-0">
-                <Link to="/" className="text-3xl font-bold">Crombiterate</Link>
+                <Link to="/contacts" className="text-3xl font-bold">Crombiterate</Link>
                 <div className="">
                     <Link
-                        to="/new"
+                        to="/contacts/new"
                         className="text-white py-2 rounded"
                     >
                         New Contact
