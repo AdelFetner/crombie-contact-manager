@@ -1,26 +1,34 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { formSchema, TFormSchema } from "../../lib/types";
+import { Contact, formSchema, TFormSchema } from "../../lib/types";
 import { Loader2 } from "lucide-react"
 import { useNavigate } from "react-router";
 import axios from "axios";
+import { useEffect } from "react";
 
-export default function ContactForm() {
-    // setts up the useForm hook from react hook form, with a zod resolver that takes an schema
+export default function ContactForm({ formType, editData }: { formType: "add" | "edit", editData?: Contact }) {
+    // sets up the useForm hook from react hook form, with a zod resolver that takes an schema
     const {
         register,
         handleSubmit,
         formState: { errors, isSubmitting },
-        reset
+        reset,
     } = useForm<TFormSchema>({
-        resolver: zodResolver(formSchema)
+        resolver: zodResolver(formSchema),
     });
+
+    // if its the edit form, it waits for editData so it can reset values to the contact values
+    useEffect(() => {
+        if (formType === "edit" && editData) {
+            reset(editData);
+        }
+    }, [editData, formType, reset]);
 
     const navigate = useNavigate();
 
-    const onSubmit = async (data: TFormSchema) => {
+    // adds a new contact
+    const addContact = async (data: TFormSchema) => {
         try {
-            // sends a post request to the api to add a new contact and navigates to /contacts/:id
             const response = await axios.post("http://localhost:3000/api/contacts", data);
             navigate(`/contacts/${response.data.data.id}`)
             reset();
@@ -28,6 +36,30 @@ export default function ContactForm() {
             console.error("Failed to add contact", error);
         }
     }
+
+    // edits a contact
+    const editContact = async (data: TFormSchema) => {
+        try {
+            if (!editData?.id) {
+                throw new Error("No contact id found");
+            }
+
+            // puts new data and goes to the contact card 
+            const response = await axios.put(`http://localhost:3000/api/contacts/${editData.id}`, data);
+            navigate(`/contacts/${response.data.awsResponse.data.id}`);
+        } catch (error) {
+            console.error("Failed to edit contact", error);
+        }
+    }
+
+    const onSubmit = async (data: TFormSchema) => {
+        if (formType === "add") {
+            addContact(data);
+        } else {
+            editContact(data);
+        }
+    }
+
 
     return (
         // form to add contacts
@@ -100,10 +132,10 @@ export default function ContactForm() {
             <button
                 disabled={isSubmitting}
                 type="submit"
-                className={`text-white px-4 py-2 rounded border-1 transition-all duration-2000 ${isSubmitting ? "bg-gray-700" : "bg-blue-500 hover:bg-blue-700 active:bg-blue-800"}`}
+                className={`text - white px - 4 py - 2 rounded border - 1 transition - all duration - 2000 ${isSubmitting ? "bg-gray-700" : "bg-blue-500 hover:bg-blue-700 active:bg-blue-800"}`}
             >
                 {/* if its submitting, show a loader, if not, the normal text */}
-                {isSubmitting ? (<Loader2 className="w-6 h-6 animate-spin mx-auto" />) : "Add Contact"
+                {isSubmitting ? (<Loader2 className="w-6 h-6 animate-spin mx-auto" />) : (formType === "add" ? "Add Contact" : "Edit Contact")
                 }
             </button>
         </form>
