@@ -2,9 +2,12 @@ import { useState } from 'react'
 import { Contact } from '../../lib/types'
 import axios from 'axios'
 import { Loader2 } from 'lucide-react'
+import { useNavigate } from 'react-router'
 
 export const ContactCard = ({ contact }: { contact: Contact }) => {
     const [loading, setLoading] = useState(false)
+
+    const navigate = useNavigate()
 
     const handleDelete = async () => {
         setLoading(true)
@@ -20,6 +23,11 @@ export const ContactCard = ({ contact }: { contact: Contact }) => {
             setLoading(false)
         }
     }
+
+    const handleEdit = () => {
+        // redirects to the edit page
+        navigate(`/contacts/${contact.id}/edit`)
+    }
     // destruct the contact
     const { firstName, lastName, email, phone, company, role, notes } = contact
 
@@ -34,6 +42,7 @@ export const ContactCard = ({ contact }: { contact: Contact }) => {
             <p>Role: {role}</p>
             <p>Notes: {notes}</p>
             <button className="mt-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onClick={handleDelete}>Delete</button>
+            <button className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleEdit}>Edit</button>
         </a>
     )
 }

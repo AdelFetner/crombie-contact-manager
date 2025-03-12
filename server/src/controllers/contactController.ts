@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import {
     createContact,
     deleteContact,
+    editContact,
     getContact,
     getContacts,
 } from "../services/contactService.js";
@@ -96,6 +97,28 @@ export const deleteContactController = async (req: Request, res: Response) => {
         if (error instanceof Error) {
             res.status(500).json({
                 error: `Failed to delete contact: ${error.message}`,
+            });
+        }
+    }
+};
+
+// edit contact
+export const editContactController = async (req: Request, res: Response) => {
+    try {
+        // gets the contactId from the request params
+        const contactId = req.params.id;
+        // calls editContact func with the contactId and the request body as the params
+        const result = await editContact(contactId, req.body);
+
+        // returns the aws response
+        res.status(200).json({
+            message: "Contact edited successfully",
+            awsResponse: result,
+        });
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            res.status(500).json({
+                error: `Failed to edit contact: ${error.message}`,
             });
         }
     }

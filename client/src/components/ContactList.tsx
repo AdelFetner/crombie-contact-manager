@@ -16,8 +16,12 @@ export default function ContactList() {
             const response = await axios.get("http://localhost:3000/api/contacts");
 
             setContacts(response.data.data);
+            if (response.data.data.length === 0) {
+                setError("No contacts found");
+            }
         } catch (err) {
-            setError("Failed to load contacts");
+            setError("Failed to get contacts");
+            console.error("Failed to get contacts", err);
         } finally {
             setLoading(false);
         }
@@ -31,7 +35,7 @@ export default function ContactList() {
     if (error) return <div className="text-red-500">{error}</div>;
 
     return (
-        <div className="space-y-4 w-full">
+        <div className="space-y-4 min-w-full">
             {contacts.map((contact) => (
                 <ContactCard key={contact.id} contact={contact} />
             ))}
