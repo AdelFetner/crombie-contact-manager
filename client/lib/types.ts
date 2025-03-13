@@ -18,6 +18,10 @@ export const formSchema = z.object({
     company: z.string().optional(),
     role: z.string().optional(),
     notes: z.string().optional(),
+    image: z
+        .instanceof(FileList)
+        .transform((fileList) => fileList[0])
+        .optional(),
 });
 
 export type TFormSchema = z.infer<typeof formSchema>;

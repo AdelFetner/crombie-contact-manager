@@ -29,7 +29,11 @@ export default function ContactForm({ formType, editData }: { formType: "add" | 
     // adds a new contact
     const addContact = async (data: TFormSchema) => {
         try {
-            const response = await axios.post("http://localhost:3000/api/contacts", data);
+            const response = await axios.post("http://localhost:3000/api/contacts", data, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
             navigate(`/contacts/${response.data.data.id}`)
             reset();
         } catch (error) {
@@ -45,7 +49,11 @@ export default function ContactForm({ formType, editData }: { formType: "add" | 
             }
 
             // puts new data and goes to the contact card 
-            const response = await axios.put(`http://localhost:3000/api/contacts/${editData.id}`, data);
+            const response = await axios.put(`http://localhost:3000/api/contacts/${editData.id}`, data, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
             navigate(`/contacts/${response.data.awsResponse.data.id}`);
         } catch (error) {
             console.error("Failed to edit contact", error);
@@ -127,6 +135,15 @@ export default function ContactForm({ formType, editData }: { formType: "add" | 
             } />
             {errors.notes && (
                 <span className="text-red-500">{`${errors.notes.message}`}</span>
+            )}
+
+            {/* image input */}
+            <label htmlFor="image">Image</label>
+            <input type="file" id="image" {
+                ...register("image")
+            } />
+            {errors.image && (
+                <span className="text-red-500">{`${errors.image.message}`}</span>
             )}
 
             <button
