@@ -6,10 +6,27 @@ import {
     getContact,
     getContacts,
 } from "../services/contactService.js";
+import { deleteFromBucket, sendToBucket } from "../services/s3Service.js";
 
 // create contact
 export const createContactController = async (req: Request, res: Response) => {
     try {
+        // multer file manipulation
+        const file = req.file;
+
+        if (file) {
+            console.log("file sent to bucket", file);
+
+            // sends the image to the bucket
+            const { url, response } = await sendToBucket(
+                "crombie-management",
+                file
+            );
+
+            // sets body image to the url so it can be sent to creacte method
+            req.body.image = url;
+        }
+
         // calls createContact func with the request body as the param
         const result = await createContact(req.body);
 
@@ -87,6 +104,13 @@ export const deleteContactController = async (req: Request, res: Response) => {
         const contactId = req.params.id;
         // calls deleteContact func with the contactId as the param
         const result = await deleteContact(contactId);
+
+        // deletes the image from the bucket if it exists
+        if (result.data && result.data?.[0]?.image) {
+            // gets the key (url) and deletes the image from the bucket
+            const key = result.data[0].image.split("/").pop();
+            await deleteFromBucket("crombie-management", key);
+        }
 
         // returns the aws response
         res.status(200).json({
