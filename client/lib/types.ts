@@ -18,9 +18,15 @@ export const formSchema = z.object({
     company: z.string().optional(),
     role: z.string().optional(),
     notes: z.string().optional(),
+    // image is an union of zod types, it can be a FileList or a string, for lists it takes the first file
     image: z
-        .instanceof(FileList)
-        .transform((fileList) => fileList[0])
+        .union([
+            z
+                .instanceof(FileList)
+                .transform((files) => files[0])
+                .optional(),
+            z.string().optional(),
+        ])
         .optional(),
 });
 
