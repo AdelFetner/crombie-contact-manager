@@ -2,7 +2,7 @@ import { Link, Outlet } from "react-router";
 
 export default function App() {
     return (
-        <div className="mx-auto p-6 place-items-center w-screen h-screen">
+        <div className="mx-auto p-6 place-items-center w-screen min-h-screen h-auto">
             <nav className="mb-8 absolute top-0">
                 <Link to="/contacts" className="text-3xl font-bold">Crombiterate</Link>
                 <div className="">
@@ -16,7 +16,7 @@ export default function App() {
             </nav>
 
             {/* main route */}
-            <main className="w-5xl max-w-5xl h-full flex justify-center">
+            <main className="w-5xl max-w-5xl min-h-full h-auto flex justify-center">
                 {/* using outlet to render child components */}
                 <Outlet />
             </main>

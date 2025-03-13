@@ -20,6 +20,7 @@ interface Contact {
     company?: string;
     role?: string;
     notes?: string;
+    image?: string;
 }
 
 // create contact
@@ -110,13 +111,13 @@ export const deleteContact = async (contactId: string) => {
     }
 
     // delete only knows the id given through the params, and it can't delete without the full key, which is a composite of id + lastName, so we need to get the lastName first
-    const getLastname = await getContact(contactId);
+    const contact = await getContact(contactId);
 
     const request = new DeleteCommand({
         TableName: "Contacts",
         Key: {
             id: contactId,
-            lastName: getLastname?.[0]?.lastName,
+            lastName: contact?.[0]?.lastName,
         },
     });
 
@@ -125,8 +126,8 @@ export const deleteContact = async (contactId: string) => {
         const response = await docClient.send(request);
         // returns the response and the data for the controller to show
         return {
+            data: contact,
             response,
-            data: { id: contactId, createdAt: getLastname?.[0]?.createdAt },
         };
     } catch (error) {
         throw error;
@@ -147,24 +148,24 @@ export const editContact = async (
         throw new Error("Invalid contact ID");
     }
 
-    // lastName is needed to edit the contact, but it is the sort key. We need to delete the old record and create a new one with the new data, this is really inneficient, but it will serve from now till a later version, a better way would be to change it to a less troublesome sort key, or use a global index
-    const deleteOldRecord = await deleteContact(contactId);
-
-    // adds the id and createdAt to new contact
-    const newContact: Contact = {
-        id: contactId,
-        createdAt: deleteOldRecord.data.createdAt,
-        ...data,
-    };
-
-    // puts item data on the table
-    const request = new PutCommand({
-        TableName: "Contacts",
-        Item: newContact,
-    });
-
     // sends request to dynamodb
     try {
+        // lastName is needed to edit the contact, but it is the sort key. We need to delete the old record and create a new one with the new data, this is really inneficient, but it will serve from now till a later version, a better way would be to change it to a less troublesome sort key, or use a global index
+        const deleteOldRecord = await deleteContact(contactId);
+
+        // adds the id, createdAt and rest of data to new contact
+        const newContact: Contact = {
+            id: contactId,
+            createdAt: deleteOldRecord.data?.[0]?.createdAt,
+            ...data,
+        };
+
+        // puts item data on the table
+        const request = new PutCommand({
+            TableName: "Contacts",
+            Item: newContact,
+        });
+
         const response = await docClient.send(request);
         // returns the response and the data for the controller to show
         return {

@@ -35,7 +35,7 @@ export default function ContactList() {
     if (error) return <div className="text-red-500">{error}</div>;
 
     return (
-        <div className="space-y-4 min-w-full">
+        <div className="min-h-full h-auto min-w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {contacts.map((contact) => (
                 <ContactCard key={contact.id} contact={contact} />
             ))}

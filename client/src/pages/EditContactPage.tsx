@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import ContactForm from '../components/ContactForm'
 import { Contact } from '../../lib/types';
 import axios from 'axios';

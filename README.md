@@ -17,10 +17,8 @@ A full-stack contact management application built with React, TypeScript, NodeJs
   - Edit existing contacts
   - Delete contacts
 
-- **on development:**
-  - S3 Connection to store images and show them on the client
-
 - **AWS Integration**
+  - S3 Connection to store images and show them on the client
   - DynamoDB table for contact storage
   - CRUD operations using AWS SDK v3
   - Proper error handling for AWS operations
@@ -29,6 +27,7 @@ A full-stack contact management application built with React, TypeScript, NodeJs
 ### Bonus Features Implemented
 - ✨ Edit existing contacts
 - 🗑️ Delete functionality
+- 🧺 S3 Connection to Contact
 
 ## Technologies Used
 
@@ -50,6 +49,7 @@ A full-stack contact management application built with React, TypeScript, NodeJs
 | AWS SDK v3 | Cloud service interaction and documentation |
 | Node.js | Backend |
 | Express.js | API endpoints |
+| Multer | multform middleware |
 
 ## Project Structure
 
@@ -68,8 +68,8 @@ Client:
 
 ### Prerequisites
 - Node.js v18+
-- AWS account with DynamoDB access
-- AWS Credentials
+- AWS account with DynamoDB access and S3 Bucket access
+- AWS Credentials for both DynamoDB and S3 Bucket
 
 ### Installation
 1. Clone repository
@@ -90,6 +90,9 @@ npm install
 ORG_AWS_REGION=your_aws_region
 ORG_AWS_ACCESS_KEY_ID=your_access_key
 ORG_AWS_SECRET_ACCESS_KEY=your_secret_key
+S3_AWS_ACCESS_KEY
+S3_AWS_SECRET_ACCESS
+S3_AWS_REGION
 ```
 
 Start development server
@@ -113,6 +116,7 @@ interface Contact {
   company?: string;
   role?: string;
   notes?: string;
+  image: union(file string)
 }
 ```
 

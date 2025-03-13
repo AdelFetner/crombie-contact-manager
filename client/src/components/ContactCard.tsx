@@ -28,13 +28,18 @@ export const ContactCard = ({ contact }: { contact: Contact }) => {
         // redirects to the edit page
         navigate(`/contacts/${contact.id}/edit`)
     }
+
+    const handleClick = () => {
+        navigate(`/contacts/${contact.id}`);
+    }
     // destruct the contact
-    const { firstName, lastName, email, phone, company, role, notes } = contact
+    const { image, firstName, lastName, email, phone, company, role, notes } = contact
 
     if (loading) return <Loader2 className="w-6 h-6 animate-spin mx-auto" />
 
     return (
-        <a href="#" className="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+        <article className="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+            <img src={image ? image : 'https://placehold.co/600'} alt={`${firstName} ${lastName}`} onClick={handleClick} className="w-24 h-24 mx-auto rounded-full" />
             <h1>{firstName} {lastName}</h1>
             <p>Email: {email}</p>
             <p>phone: {phone}</p>
@@ -43,6 +48,6 @@ export const ContactCard = ({ contact }: { contact: Contact }) => {
             <p>Notes: {notes}</p>
             <button className="mt-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onClick={handleDelete}>Delete</button>
             <button className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleEdit}>Edit</button>
-        </a>
+        </article>
     )
 }
