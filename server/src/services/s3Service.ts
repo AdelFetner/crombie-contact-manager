@@ -121,3 +121,26 @@ export const deleteFromBucket = async (bucketName: string, key: string) => {
         }
     }
 };
+
+// edit file in a bucket
+// takes the bucket where to edit, the key of the object to edit, and the new file. It deletes the old object and uploads the new one
+export const editInBucket = async (
+    bucketName: string,
+    key: string,
+    file: Express.Multer.File
+) => {
+    // if file is anything other than an image, return an error
+    if (!file.mimetype.startsWith("image")) {
+        throw new Error("File is not an image");
+    }
+
+    try {
+        // deletes the old object
+        await deleteFromBucket(bucketName, key);
+
+        // uploads the new object
+        return await sendToBucket(bucketName, file);
+    } catch (error: unknown) {
+        throw new Error(`Failed to edit file: ${error}`);
+    }
+};

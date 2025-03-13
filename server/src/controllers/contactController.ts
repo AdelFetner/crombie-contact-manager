@@ -15,8 +15,6 @@ export const createContactController = async (req: Request, res: Response) => {
         const file = req.file;
 
         if (file) {
-            console.log("file sent to bucket", file);
-
             // sends the image to the bucket
             const { url, response } = await sendToBucket(
                 "crombie-management",
@@ -131,8 +129,20 @@ export const editContactController = async (req: Request, res: Response) => {
     try {
         // gets the contactId from the request params
         const contactId = req.params.id;
+        const file = req.file;
+        const body = req.body;
+
+        // if file exists, sends it to bucket and sets img to body as the url, if not, sets img to the existing contact image or empty to cover for editing cases
+        if (file) {
+            const { url } = await sendToBucket("crombie-management", file);
+            body.image = url;
+        } else {
+            const existingContact = await getContact(contactId);
+            body.image = existingContact?.[0]?.image || "";
+        }
+
         // calls editContact func with the contactId and the request body as the params
-        const result = await editContact(contactId, req.body);
+        const result = await editContact(contactId, body);
 
         // returns the aws response
         res.status(200).json({
@@ -140,10 +150,8 @@ export const editContactController = async (req: Request, res: Response) => {
             awsResponse: result,
         });
     } catch (error: unknown) {
-        if (error instanceof Error) {
-            res.status(500).json({
-                error: `Failed to edit contact: ${error.message}`,
-            });
-        }
+        res.status(500).json({
+            error: `Failed to edit contact: ${error}`,
+        });
     }
 };

@@ -16,4 +16,4 @@ contactsRouter.post("/", upload.single("image"), createContactController);
 contactsRouter.get("/", getContactsController);
 contactsRouter.get("/:id", getContactController);
 contactsRouter.delete("/:id", deleteContactController);
-contactsRouter.put("/:id", editContactController);
+contactsRouter.put("/:id", upload.single("image"), editContactController);
